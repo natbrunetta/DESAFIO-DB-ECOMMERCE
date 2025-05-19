@@ -1,0 +1,82 @@
+-- QUERIES
+
+-- queries basicas de select statement 
+SELECT * FROM clientes;
+
+SELECT * FROM produtos;
+
+SELECT CNAME, email FROM clientes;
+
+SELECT * FROM vendedor_produtos;
+
+-- PERGUNTAS 
+
+-- Clientes pessoa física cadastrados após 01/01/2023
+SELECT * FROM clientes 
+WHERE tipo = 'PF' AND data_cadastro > '2023-01-01';
+
+-- Produtos com preço acima da média
+SELECT * FROM produtos 
+WHERE preco > (SELECT AVG(preco) FROM produtos);
+
+-- Vendedores com mais de 5 produtos cadastrados
+
+SELECT v.id_vendedor, v.nome_fantasia, COUNT(*) as total_produtos
+FROM VENDEDORES_TERCEIROS v
+JOIN vendedor_produtos vp ON v.id_vendedor = vp.id_vendedor
+GROUP BY v.id_vendedor, v.nome_fantasia
+HAVING COUNT(*) > 5;
+
+
+-- Clientes que NÃO são de São Paulo (analisando endereço)
+SELECT * FROM clientes 
+WHERE endereco NOT LIKE '%/SP' AND endereco NOT LIKE '%São Paulo%';
+
+
+
+-- Disponibilidade de produtos por vendedor
+SELECT 
+    v.id_vendedor,
+    v.nome_fantasia,
+    COUNT(*) AS total_produtos_cadastrados,
+    SUM(CASE WHEN vp.estoque_disponivel > 0 THEN 1 ELSE 0 END) AS produtos_disponiveis,
+    CONCAT(ROUND(SUM(CASE WHEN vp.estoque_disponivel > 0 THEN 1 ELSE 0 END) / COUNT(*) * 100, 2), '%') AS percentual_disponivel
+FROM VENDEDORES_TERCEIROS v
+JOIN vendedor_produtos vp ON v.id_vendedor = vp.id_vendedor
+GROUP BY v.id_vendedor, v.nome_fantasia;
+
+-- Clientes ordenados por nome crescente
+SELECT id_cliente, CNAME, email, data_cadastro
+FROM clientes
+ORDER BY CNAME ASC;
+
+-- Produtos mais caros primeiro, depois por nome
+SELECT id_produto, nome, categoria, preco
+FROM produtos
+ORDER BY preco DESC, nome ASC;
+
+-- Produtos com estoque abaixo de 10 unidades
+SELECT p.id_produto, p.nome, SUM(e.quantidade) AS total_estoque
+FROM produtos p
+JOIN estoque e ON p.id_produto = e.id_produto
+GROUP BY p.id_produto, p.nome
+HAVING SUM(e.quantidade) < 10;
+
+-- Lista de clientes com seus pedidos
+SELECT c.CNAME AS cliente, p.id_pedido, p.data_pedido, p.valor_total
+FROM clientes c
+JOIN pedidos p ON c.id_cliente = p.id_cliente
+ORDER BY c.CNAME, p.data_pedido DESC;
+
+-- Detalhes dos itens de um pedido específico
+SELECT p.nome AS produto, pi.quantidade, pi.preco_unitario, pi.total_item
+FROM pedido_itens pi
+JOIN produtos p ON pi.id_produto = p.id_produto
+WHERE pi.id_pedido = 1;
+
+-- Pedidos e suas formas de pagamento
+SELECT p.id_pedido, c.CNAME AS cliente, pg.forma_pagamento, pg.status, pg.valor
+FROM pedidos p
+JOIN clientes c ON p.id_cliente = c.id_cliente
+JOIN pagamentos pg ON p.id_pedido = pg.id_pedido
+ORDER BY p.data_pedido DESC;
