@@ -4,92 +4,12 @@ Modelagem de Banco de Dados para E-commerce
 
 📌 Visão Geral
 
+Este projeto apresenta uma modelagem completa de banco de dados para um sistema de e-commerce desenvolvido em MySQL. Ele contém toda a estrutura necessária para gerenciar as operações básicas de uma loja virtual, desde o cadastro de clientes até o processamento de pedidos.
 
-Este projeto implementa uma solução completa de banco de dados para um sistema de e-commerce, desde a modelagem conceitual até a implementação física com queries complexas. O sistema gerencia todas as operações essenciais de um comércio eletrônico, incluindo:
+O sistema foi projetado para atender tanto clientes pessoa física quanto jurídica, com tabelas especializadas para cada tipo. Inclui um catálogo de produtos com controle de estoque, sistema completo de pedidos com status de pagamento e entrega, além de módulos para gerenciar fornecedores e vendedores terceiros em modelo marketplace.
 
-👥 Cadastro de clientes (PF e PJ)
+A implementação traz scripts SQL prontos para criação das tabelas, inserção de dados de teste e consultas analíticas úteis para geração de relatórios. As queries incluem desde operações básicas até análises complexas.
 
-🛒 Controle de pedidos e estoque
+O projeto faz parte do desafio do Bootcamp da DIO de Analise de Dados e também pode servir como base para quem deseja aprender modelagem de bancos de dados.
 
-📦 Gestão logística e entregas
-
-💰 Processamento de pagamentos
-
-🤝 Relacionamento com fornecedores e vendedores terceiros
-
-
-
-
-## 🗃️ Principais Tabelas
-
-| Tabela                | Descrição                          |
-|-----------------------|------------------------------------|
-| `clientes`            | Cadastro base de clientes          |
-| `clientes_pf`         | Dados específicos de pessoa física |
-| `clientes_pj`         | Dados específicos de pessoa jurídica |
-| `produtos`            | Catálogo de produtos               |
-| `pedidos`             | Registro de pedidos                |
-| `pedido_itens`        | Itens de cada pedido               |
-| `fornecedores`        | Cadastro de fornecedores           |
-| `vendedores_terceiros`| Vendedores do marketplace          |
-
-
-
-
-
-
-## ✨ Features Implementadas
-
-✅ **Hierarquia de clientes** (PF/PJ) com tabelas especializadas  
-✅ **Controle completo de pedidos** com status e rastreamento  
-✅ **Gestão de estoque** com múltiplos fornecedores  
-✅ **Marketplace integrado** para vendedores terceiros  
-✅ **Mecanismos de integridade** avançados (PK, FK, constraints)  
-✅ **Queries analíticas** prontas para business intelligence  
-
-
-```markdown
-## 📂 Estrutura do Projeto
-
-📁 **/ecommerce-db/**
-│
-├── 📂 **/scripts/**
-│   ├── 📄 create_tables.sql - Script de criação do schema
-│   ├── 📄 insert_data.sql - Dados de teste
-│   └── 📄 queries_avancadas.sql - Consultas complexas
-│
-├── 📄 README.md - Este arquivo
-└── 📄 ecommerce_ER.diagram - Diagrama EER 
-```
-
-## 🔍 Exemplos de Consultas
-
-```sql
--- Clientes que mais compram (RFM)
-SELECT 
-    c.id_cliente, 
-    c.CNAME,
-    COUNT(p.id_pedido) AS frequencia,
-    SUM(p.valor_total) AS valor_total,
-    DATEDIFF(NOW(), MAX(p.data_pedido)) AS recencia
-FROM clientes c
-JOIN pedidos p ON c.id_cliente = p.id_cliente
-GROUP BY c.id_cliente, c.CNAME
-ORDER BY valor_total DESC;
-
--- Pedidos e suas formas de pagamento
-SELECT 
-    p.id_pedido, 
-    c.CNAME AS cliente, 
-    pg.forma_pagamento, 
-    pg.status, 
-    pg.valor
-FROM pedidos p
-JOIN clientes c ON p.id_cliente = c.id_cliente
-JOIN pagamentos pg ON p.id_pedido = pg.id_pedido
-ORDER BY p.data_pedido DESC;
-```
-
-🤝 Contribuição
-Contribuições são bem-vindas! 
 
